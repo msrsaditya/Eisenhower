@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Eisenhower Task Manager - Organize your tasks based on urgency and importance to boost productivity and focus on what matters." />
   <title>Eisenhower Task Manager</title>
   <style>
     /* Reset and base styles */
@@ -53,15 +54,26 @@
       background-color: #2c2c2c;
       color: #e0e0e0;
     }
-    /* Quadrant selector gets a bit less width */
-    #quadrantSelect {
+    /* Label styling */
+    .form-group {
       flex: 0.3;
+      display: flex;
+      flex-direction: column;
+    }
+    .form-label {
+      margin-bottom: 0.25rem;
+      font-size: 0.875rem;
+      color: #a0a0a0;
+    }
+    /* Quadrant selector styling */
+    #quadrantSelect {
       appearance: none;
-      padding: 0rem 0rem 0rem 0.5rem; /* extra right padding for the arrow */
+      padding: 0.75rem 0.5rem;
       background: #2c2c2c url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='%23e0e0e0' viewBox='0 0 24 24'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E") no-repeat right center;
       background-size: 1.5rem;
       border: 1px solid #444;
       border-radius: 4px;
+      width: 100%;
     }
 
     /* Matrix grid styles */
@@ -162,8 +174,9 @@
       <h1>Eisenhower Task Manager</h1>
     </header>
 
-    <!-- Form with added quadrant selection -->
+    <!-- Form with proper accessibility labels -->
     <form class="task-form" id="taskForm">
+      <label for="taskInput" class="sr-only">Task description</label>
       <input 
         type="text" 
         class="task-input" 
@@ -171,12 +184,15 @@
         placeholder="Add a new task..." 
         required
       >
-      <select id="quadrantSelect" class="task-input">
-        <option value="urgentImportant">Urgent & Important</option>
-        <option value="notUrgentImportant">Not Urgent & Important</option>
-        <option value="urgentNotImportant">Urgent & Not Important</option>
-        <option value="notUrgentNotImportant">Not Urgent & Not Important</option>
-      </select>
+      <div class="form-group">
+        <label for="quadrantSelect" class="form-label">Task quadrant</label>
+        <select id="quadrantSelect">
+          <option value="urgentImportant">Urgent & Important</option>
+          <option value="notUrgentImportant">Not Urgent & Important</option>
+          <option value="urgentNotImportant">Urgent & Not Important</option>
+          <option value="notUrgentNotImportant">Not Urgent & Not Important</option>
+        </select>
+      </div>
     </form>
 
     <div class="matrix-grid">
@@ -199,164 +215,210 @@
     </p>
   </div>
   <script>
-    // State management with persistence
-    let tasks = {
-      urgentImportant: [],
-      notUrgentImportant: [],
-      urgentNotImportant: [],
-      notUrgentNotImportant: []
-    };
-
-    // Save tasks to localStorage
-    function saveTasks() {
-      localStorage.setItem('tasks', JSON.stringify(tasks));
+(function(){
+  // Create a storage wrapper to handle localStorage or fallback to memory
+  const storage = {
+    data: null,
+    isAvailable: false,
+    
+    // Check if localStorage is available
+    checkAvailability: function() {
+      try {
+        localStorage.setItem('test', 'test');
+        localStorage.removeItem('test');
+        this.isAvailable = true;
+        return true;
+      } catch (e) {
+        this.isAvailable = false;
+        console.warn("localStorage unavailable. Using in-memory storage instead.");
+        return false;
+      }
+    },
+    
+    // Save data
+    save: function(data) {
+      if (this.isAvailable) {
+        localStorage.setItem('tasks', JSON.stringify(data));
+      }
+      // Always keep a memory copy
+      this.data = data;
+    },
+    
+    // Load data
+    load: function() {
+      if (this.isAvailable) {
+        const savedData = localStorage.getItem('tasks');
+        if (savedData) {
+          this.data = JSON.parse(savedData);
+          return this.data;
+        }
+      }
+      
+      // Return default data structure if nothing was loaded
+      if (!this.data) {
+        this.data = {
+          urgentImportant: [],
+          notUrgentImportant: [],
+          urgentNotImportant: [],
+          notUrgentNotImportant: []
+        };
+      }
+      
+      return this.data;
     }
+  };
 
-    // Render all tasks from the tasks object
-    function renderAllTasks() {
-      document.querySelectorAll('.quadrant').forEach(quadrant => {
-        // Preserve header text by extracting it first
-        const headerText = quadrant.querySelector('h2').innerText;
-        quadrant.innerHTML = '<h2>' + headerText + '</h2>';
-      });
-      for (const quadrantId in tasks) {
-        const quadrantEl = document.querySelector(`[data-quadrant="${quadrantId}"]`);
+  // Check storage availability once at start
+  storage.checkAvailability();
+  
+  // Load tasks
+  let tasks = storage.load();
+
+  // Save tasks using our storage wrapper
+  function saveTasks() {
+    storage.save(tasks);
+  }
+
+  // Render all tasks from the tasks object
+  function renderAllTasks() {
+    document.querySelectorAll('.quadrant').forEach(quadrant => {
+      const headerText = quadrant.querySelector('h2').innerText;
+      quadrant.innerHTML = '<h2>' + headerText + '</h2>';
+    });
+    
+    for (const quadrantId in tasks) {
+      const quadrantEl = document.querySelector(`[data-quadrant="${quadrantId}"]`);
+      if (quadrantEl && tasks[quadrantId]) {
         tasks[quadrantId].forEach(task => {
           quadrantEl.appendChild(createTaskCard(task.text, task.id));
         });
       }
     }
+  }
 
-    // Create a new task card element
-    function createTaskCard(taskText, taskId) {
-      const taskCard = document.createElement('div');
-      taskCard.className = 'task-card';
-      taskCard.draggable = true;
-      taskCard.dataset.taskId = taskId;
+  // Create a new task card element
+  function createTaskCard(taskText, taskId) {
+    const taskCard = document.createElement('div');
+    taskCard.className = 'task-card';
+    taskCard.draggable = true;
+    taskCard.dataset.taskId = taskId;
 
-      const taskContent = document.createElement('span');
-      taskContent.textContent = taskText;
+    const taskContent = document.createElement('span');
+    taskContent.textContent = taskText;
 
-      const deleteButton = document.createElement('button');
-      deleteButton.className = 'delete-button';
-      deleteButton.innerHTML = '×';
-      deleteButton.onclick = (e) => {
-        e.stopPropagation();
-        deleteTask(taskId);
-      };
+    const deleteButton = document.createElement('button');
+    deleteButton.className = 'delete-button';
+    deleteButton.innerHTML = '×';
+    deleteButton.onclick = (e) => {
+      e.stopPropagation();
+      deleteTask(taskId);
+    };
 
-      taskCard.appendChild(taskContent);
-      taskCard.appendChild(deleteButton);
+    taskCard.appendChild(taskContent);
+    taskCard.appendChild(deleteButton);
 
-      // Drag event listeners
-      taskCard.addEventListener('dragstart', handleDragStart);
-      taskCard.addEventListener('dragend', handleDragEnd);
+    // Drag event listeners
+    taskCard.addEventListener('dragstart', handleDragStart);
+    taskCard.addEventListener('dragend', handleDragEnd);
 
-      return taskCard;
+    return taskCard;
+  }
+
+  // Delete a task
+  function deleteTask(taskId) {
+    for (let quadrant in tasks) {
+      tasks[quadrant] = tasks[quadrant].filter(task => task.id !== taskId);
     }
-
-    // Add a new task with quadrant selection and duplicate check
-    function addTask(taskText) {
-      // Prevent duplicate tasks
-      const allTasks = Object.values(tasks).flat();
-      if (allTasks.some(task => task.text === taskText)) {
-        alert('Task already exists!');
-        return;
-      }
-      const quadrantSelect = document.getElementById('quadrantSelect');
-      const quadrantId = quadrantSelect.value;
-      const taskId = Date.now().toString();
-
-      tasks[quadrantId].push({ id: taskId, text: taskText });
-      const quadrantEl = document.querySelector(`[data-quadrant="${quadrantId}"]`);
-      quadrantEl.appendChild(createTaskCard(taskText, taskId));
-      saveTasks();
+    const taskCard = document.querySelector(`[data-task-id="${taskId}"]`);
+    if (taskCard) {
+      taskCard.remove();
     }
+    saveTasks();
+  }
 
-    // Delete a task
-    function deleteTask(taskId) {
-      for (let quadrant in tasks) {
-        tasks[quadrant] = tasks[quadrant].filter(task => task.id !== taskId);
-      }
-      const taskCard = document.querySelector(`[data-task-id="${taskId}"]`);
-      if (taskCard) {
-        taskCard.remove();
-      }
-      saveTasks();
+  // Add a new task with quadrant selection
+  function addTask(taskText) {
+    if (Object.values(tasks).flat().some(task => task.text === taskText)) {
+      alert("Task already exists!");
+      return;
     }
+    
+    const quadrantSelect = document.getElementById('quadrantSelect');
+    const quadrantId = quadrantSelect.value;
+    const taskId = Date.now().toString();
 
-    // Drag and drop handlers
-    function handleDragStart(e) {
-      e.target.classList.add('dragging');
-      e.dataTransfer.setData('text/plain', e.target.dataset.taskId);
-      const sourceQuadrant = e.target.closest('.quadrant').dataset.quadrant;
-      e.dataTransfer.setData('sourceQuadrant', sourceQuadrant);
-    }
+    tasks[quadrantId].push({ id: taskId, text: taskText });
+    const quadrantEl = document.querySelector(`[data-quadrant="${quadrantId}"]`);
+    quadrantEl.appendChild(createTaskCard(taskText, taskId));
+    saveTasks();
+  }
 
-    function handleDragEnd(e) {
-      e.target.classList.remove('dragging');
-      document.querySelectorAll('.quadrant').forEach(quadrant => {
-        quadrant.classList.remove('drag-over');
-      });
-    }
+  // Drag handlers
+  function handleDragStart(e) {
+    e.target.classList.add('dragging');
+    e.dataTransfer.setData('text/plain', e.target.dataset.taskId);
+    const sourceQuadrant = e.target.closest('.quadrant').dataset.quadrant;
+    e.dataTransfer.setData('sourceQuadrant', sourceQuadrant);
+  }
 
-    function handleDragOver(e) {
-      e.preventDefault();
-      e.currentTarget.classList.add('drag-over');
-    }
-
-    function handleDragLeave(e) {
-      e.currentTarget.classList.remove('drag-over');
-    }
-
-    function handleDrop(e) {
-      e.preventDefault();
-      const quadrant = e.currentTarget;
+  function handleDragEnd(e) {
+    e.target.classList.remove('dragging');
+    document.querySelectorAll('.quadrant').forEach(quadrant => {
       quadrant.classList.remove('drag-over');
+    });
+  }
 
-      const taskId = e.dataTransfer.getData('text/plain');
-      const sourceQuadrant = e.dataTransfer.getData('sourceQuadrant');
-      const targetQuadrant = quadrant.dataset.quadrant;
-
-      if (sourceQuadrant === targetQuadrant) return;
-
-      const taskIndex = tasks[sourceQuadrant].findIndex(task => task.id === taskId);
-      if (taskIndex === -1) return;
-
-      const task = tasks[sourceQuadrant].splice(taskIndex, 1)[0];
-      tasks[targetQuadrant].push(task);
-
-      const taskElement = document.querySelector(`[data-task-id="${taskId}"]`);
-      quadrant.appendChild(taskElement);
-      saveTasks();
-    }
-
-    // Initialize the application and load saved tasks
-    document.addEventListener('DOMContentLoaded', () => {
-      const savedTasks = localStorage.getItem('tasks');
-      if (savedTasks) {
-        tasks = JSON.parse(savedTasks);
-        renderAllTasks();
-      }
-      
-      const taskForm = document.getElementById('taskForm');
+  // Initialize application
+  document.addEventListener('DOMContentLoaded', () => {
+    // Render tasks
+    renderAllTasks();
+    
+    // Set up form submission
+    document.getElementById('taskForm').addEventListener('submit', (e) => {
+      e.preventDefault();
       const taskInput = document.getElementById('taskInput');
-      
-      taskForm.addEventListener('submit', (e) => {
-        e.preventDefault();
-        const taskText = taskInput.value.trim();
-        if (taskText) {
-          addTask(taskText);
-          taskInput.value = '';
-        }
-      });
+      const taskText = taskInput.value.trim();
+      if (taskText) {
+        addTask(taskText);
+        taskInput.value = '';
+      }
+    });
 
-      document.querySelectorAll('.quadrant').forEach(quadrant => {
-        quadrant.addEventListener('dragover', handleDragOver);
-        quadrant.addEventListener('dragleave', handleDragLeave);
-        quadrant.addEventListener('drop', handleDrop);
+    // Set up drag and drop for quadrants
+    document.querySelectorAll('.quadrant').forEach(quadrant => {
+      quadrant.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        e.currentTarget.classList.add('drag-over');
+      });
+      
+      quadrant.addEventListener('dragleave', (e) => {
+        e.currentTarget.classList.remove('drag-over');
+      });
+      
+      quadrant.addEventListener('drop', (e) => {
+        e.preventDefault();
+        const quadrant = e.currentTarget;
+        quadrant.classList.remove('drag-over');
+
+        const taskId = e.dataTransfer.getData('text/plain');
+        const sourceQuadrant = e.dataTransfer.getData('sourceQuadrant');
+        const targetQuadrant = quadrant.dataset.quadrant;
+
+        if (sourceQuadrant === targetQuadrant) return;
+
+        const taskIndex = tasks[sourceQuadrant].findIndex(task => task.id === taskId);
+        if (taskIndex === -1) return;
+
+        const task = tasks[sourceQuadrant].splice(taskIndex, 1)[0];
+        tasks[targetQuadrant].push(task);
+
+        const taskElement = document.querySelector(`[data-task-id="${taskId}"]`);
+        quadrant.appendChild(taskElement);
+        saveTasks();
       });
     });
+  });
+})();
   </script>
 </body>
 </html>
