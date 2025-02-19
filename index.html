@@ -6,188 +6,7 @@
   <meta name="description" content="Eisenhower Task Manager - Organize your tasks based on urgency and importance to boost productivity and focus on what matters." />
   <title>Eisenhower Task Manager</title>
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-      line-height: 1.6;
-      color: #e0e0e0;
-      background-color: #121212;
-      padding: 2rem;
-    }
-    .container {
-      max-width: 1200px;
-      margin: 0 auto;
-      background-color: #1e1e1e;
-      border-radius: 8px;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
-      padding: 2rem;
-    }
-    .header {
-      text-align: center;
-      margin-bottom: 2rem;
-    }
-    .header h1 {
-      font-size: 2rem;
-      color: #ffffff;
-      margin-bottom: 1rem;
-    }
-    .task-form {
-      display: flex;
-      gap: 1rem;
-      margin-bottom: 2rem;
-      align-items: flex-end;
-    }
-    .task-input-group {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-    }
-    .task-input-label {
-      font-size: 1.2rem;
-      color: #ffffff;
-      margin-bottom: 0.5rem;
-      font-weight: 500;
-    }
-    .task-input {
-      width: 100%;
-      padding: 1rem;
-      border: 1px solid #444;
-      border-radius: 4px;
-      font-size: 1rem;
-      background-color: #2c2c2c;
-      color: #e0e0e0;
-      height: 50px;
-    }
-    .form-group {
-      min-width: 200px;
-      display: flex;
-      flex-direction: column;
-    }
-    .form-label {
-      font-size: 1.2rem;
-      color: #ffffff;
-      margin-bottom: 0.5rem;
-      font-weight: 500;
-    }
-    #quadrantSelect {
-      appearance: none;
-      padding: 0.75rem 0.5rem;
-      background: #2c2c2c url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='%23e0e0e0' viewBox='0 0 24 24'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E") no-repeat right center;
-      background-size: 1.5rem;
-      border: 1px solid #444;
-      border-radius: 4px;
-      width: 110%;
-      color: #e0e0e0;
-      height: 50px;
-      font-size: 1rem;
-    }
-    #quadrantSelect option {
-      background-color: #2c2c2c;
-      color: #e0e0e0;
-    }
-    .sr-only {
-      position: absolute;
-      width: 1px;
-      height: 1px;
-      padding: 0;
-      margin: -1px;
-      overflow: hidden;
-      clip: rect(0, 0, 0, 0);
-      border: 0;
-    }
-    .matrix-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 1.5rem;
-      margin-bottom: 2rem;
-    }
-    .quadrant {
-      padding: 1.5rem;
-      border-radius: 8px;
-      min-height: 300px;
-      transition: border-color 0.2s;
-      position: relative;
-    }
-    .quadrant h2 {
-      font-size: 1.25rem;
-      margin-bottom: 1rem;
-      color: #ffffff;
-    }
-    .urgent-important {
-      background-color: #7f1d1d;
-    }
-    .not-urgent-important {
-      background-color: #1e3a8a;
-    }
-    .urgent-not-important {
-      background-color: #9a3412;
-    }
-    .not-urgent-not-important {
-      background-color: #14532d;
-    }
-    .task-card {
-      background: #2c2c2c;
-      padding: 0.75rem;
-      border-radius: 4px;
-      margin-bottom: 0.75rem;
-      cursor: move;
-      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      transition: box-shadow 0.2s, opacity 0.2s;
-      user-select: none;
-      color: #e0e0e0;
-    }
-    .task-card:hover {
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
-    }
-    .delete-button {
-      opacity: 0.7;
-      background: none;
-      border: none;
-      color: #e53e3e;
-      cursor: pointer;
-      font-size: 1.25rem;
-      transition: opacity 0.2s;
-      padding: 0 0.5rem;
-    }
-    .delete-button:hover {
-      opacity: 1;
-    }
-    .instructions {
-      text-align: center;
-      color: #a0a0a0;
-      font-size: 0.875rem;
-    }
-    .dragging {
-      opacity: 0.5;
-    }
-    .drag-over {
-      border: 2px dashed #6200ee;
-      background-color: rgba(66, 153, 225, 0.1);
-    }
-    @media (max-width: 768px) {
-      .matrix-grid {
-        grid-template-columns: 1fr;
-      }
-      .container {
-        padding: 1rem;
-      }
-      body {
-        padding: 1rem;
-      }
-      .task-form {
-        flex-direction: column;
-      }
-      .form-group {
-        width: 100%;
-      }
-    }
+    *{margin:0;padding:0;box-sizing:border-box}body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;line-height:1.6;color:#e0e0e0;background-color:#121212;padding:2rem}.container{max-width:1200px;margin:0 auto;background-color:#1e1e1e;border-radius:8px;box-shadow:0 2px 4px rgba(0,0,0,.8);padding:2rem}.header{text-align:center;margin-bottom:2rem}.header h1{font-size:2rem;color:#fff;margin-bottom:1rem}.task-form{display:flex;gap:1rem;margin-bottom:2rem;align-items:flex-end}.task-input-group{flex:1;display:flex;flex-direction:column}.task-input-label{font-size:1.2rem;color:#fff;margin-bottom:.5rem;font-weight:500}.task-input{width:100%;padding:1rem;border:1px solid #444;border-radius:4px;font-size:1rem;background-color:#2c2c2c;color:#e0e0e0;height:50px}.form-group{min-width:200px;display:flex;flex-direction:column}.form-label{font-size:1.2rem;color:#fff;margin-bottom:.5rem;font-weight:500}#quadrantSelect{appearance:none;padding:.75rem .5rem;background:#2c2c2c url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='%23e0e0e0' viewBox='0 0 24 24'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E") no-repeat right center;background-size:1.5rem;border:1px solid #444;border-radius:4px;width:110%;color:#e0e0e0;height:50px;font-size:1rem}#quadrantSelect option{background-color:#2c2c2c;color:#e0e0e0}.matrix-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1.5rem;margin-bottom:2rem}.quadrant{padding:1.5rem;border-radius:8px;min-height:300px;transition:border-color .2s;position:relative}.quadrant h2{font-size:1.25rem;margin-bottom:1rem;color:#fff}.urgent-important{background-color:#7f1d1d}.not-urgent-important{background-color:#1e3a8a}.urgent-not-important{background-color:#9a3412}.not-urgent-not-important{background-color:#14532d}.task-card{background:#2c2c2c;padding:.75rem;border-radius:4px;margin-bottom:.75rem;cursor:move;box-shadow:0 1px 2px rgba(0,0,0,.8);display:flex;justify-content:space-between;align-items:center;transition:box-shadow .2s,opacity .2s;user-select:none;color:#e0e0e0}.task-card:hover{box-shadow:0 2px 4px rgba(0,0,0,.8)}.delete-button{opacity:.7;background:0 0;border:none;color:#e53e3e;cursor:pointer;font-size:1.25rem;transition:opacity .2s;padding:0 .5rem}.delete-button:hover{opacity:1}.instructions{text-align:center;color:#a0a0a0;font-size:.875rem}.dragging{opacity:.5}.drag-over{border:2px dashed #6200ee;background-color:rgba(66,153,225,.1)}@media (max-width:768px){.matrix-grid{grid-template-columns:1fr}.container{padding:1rem}body{padding:1rem}.task-form{flex-direction:column}.form-group{width:100%}}
   </style>
 </head>
 <body>
@@ -195,17 +14,10 @@
     <header class="header">
       <h1>Eisenhower Task Manager</h1>
     </header>
-
     <form class="task-form" id="taskForm">
       <div class="task-input-group">
         <label for="taskInput" class="task-input-label">Task Description</label>
-        <input 
-          type="text" 
-          class="task-input" 
-          id="taskInput" 
-          placeholder="Add a new task..." 
-          required
-        >
+        <input type="text" class="task-input" id="taskInput" placeholder="Add a new task..." required>
       </div>
       <div class="form-group">
         <label for="quadrantSelect" class="form-label">Task Quadrant</label>
@@ -217,7 +29,6 @@
         </select>
       </div>
     </form>
-
     <div class="matrix-grid">
       <div class="quadrant urgent-important" data-quadrant="urgentImportant">
         <h2>Urgent & Important</h2>
@@ -232,198 +43,110 @@
         <h2>Not Urgent & Not Important</h2>
       </div>
     </div>
-    <p class="instructions">
-      Drag and drop tasks between quadrants to reorganize them. 
-      Tasks persist between sessions.
-    </p>
+    <p class="instructions">Drag and drop tasks between quadrants to reorganize them. Tasks persist between sessions.</p>
   </div>
   <script>
-      (function(){
-  const storage = {
-    data: null,
-    isAvailable: false,
-    
-    checkAvailability: function() {
-      try {
-        localStorage.setItem('test', 'test');
-        localStorage.removeItem('test');
-        this.isAvailable = true;
-        return true;
-      } catch (e) {
-        this.isAvailable = false;
-        console.warn("localStorage unavailable. Using in-memory storage instead.");
-        return false;
-      }
-    },
-    
-    save: function(data) {
-      if (this.isAvailable) {
-        localStorage.setItem('tasks', JSON.stringify(data));
-      }
-      this.data = data;
-    },
-    
-    load: function() {
-      if (this.isAvailable) {
-        const savedData = localStorage.getItem('tasks');
-        if (savedData) {
-          this.data = JSON.parse(savedData);
-          return this.data;
+    (() => {
+      const t = {
+        data: null,
+        isAvailable: !1,
+        checkAvailability: function () {
+          try {
+            return localStorage.setItem("test", "test"), localStorage.removeItem("test"), this.isAvailable = !0, !0;
+          } catch (t) {
+            return this.isAvailable = !1, !1;
+          }
+        },
+        save: function (t) {
+          this.isAvailable && localStorage.setItem("tasks", JSON.stringify(t)), this.data = t;
+        },
+        load: function () {
+          if (this.isAvailable) {
+            const t = localStorage.getItem("tasks");
+            if (t) return this.data = JSON.parse(t), this.data;
+          }
+          return this.data || (this.data = {
+            urgentImportant: [],
+            notUrgentImportant: [],
+            urgentNotImportant: [],
+            notUrgentNotImportant: []
+          }), this.data;
         }
+      };
+      t.checkAvailability();
+      let a = t.load();
+      function n() {
+        t.save(a);
       }
-      
-      if (!this.data) {
-        this.data = {
-          urgentImportant: [],
-          notUrgentImportant: [],
-          urgentNotImportant: [],
-          notUrgentNotImportant: []
-        };
+      function r(t, r) {
+        const d = document.createElement("div");
+        d.className = "task-card", d.draggable = !0, d.dataset.taskId = r;
+        const s = document.createElement("span");
+        s.textContent = t;
+        const i = document.createElement("button");
+        return i.className = "delete-button", i.innerHTML = "×", i.onclick = t => {
+          t.stopPropagation(), ((t) => {
+            for (let n in a) a[n] = a[n].filter(a => a.id !== t);
+            document.querySelector(`[data-task-id="${t}"]`)?.remove(), n();
+          })(r);
+        }, d.appendChild(s), d.appendChild(i), d.addEventListener("dragstart", e), d.addEventListener("dragend", o), d;
       }
-      
-      return this.data;
-    }
-  };
-
-  storage.checkAvailability();
-  
-  let tasks = storage.load();
-
-  function saveTasks() {
-    storage.save(tasks);
-  }
-
-  function renderAllTasks() {
-    document.querySelectorAll('.quadrant').forEach(quadrant => {
-      const headerText = quadrant.querySelector('h2').innerText;
-      quadrant.innerHTML = '<h2>' + headerText + '</h2>';
-    });
-    
-    for (const quadrantId in tasks) {
-      const quadrantEl = document.querySelector(`[data-quadrant="${quadrantId}"]`);
-      if (quadrantEl && tasks[quadrantId]) {
-        tasks[quadrantId].forEach(task => {
-          quadrantEl.appendChild(createTaskCard(task.text, task.id));
+      function e(t) {
+        t.target.classList.add("dragging"), t.dataTransfer.setData("text/plain", t.target.dataset.taskId), t.dataTransfer.setData("sourceQuadrant", t.target.closest(".quadrant").dataset.quadrant);
+      }
+      function o(t) {
+        t.target.classList.remove("dragging"), document.querySelectorAll(".quadrant").forEach(t => {
+          t.classList.remove("drag-over");
         });
       }
-    }
-  }
-
-  function createTaskCard(taskText, taskId) {
-    const taskCard = document.createElement('div');
-    taskCard.className = 'task-card';
-    taskCard.draggable = true;
-    taskCard.dataset.taskId = taskId;
-
-    const taskContent = document.createElement('span');
-    taskContent.textContent = taskText;
-
-    const deleteButton = document.createElement('button');
-    deleteButton.className = 'delete-button';
-    deleteButton.innerHTML = '×';
-    deleteButton.onclick = (e) => {
-      e.stopPropagation();
-      deleteTask(taskId);
-    };
-
-    taskCard.appendChild(taskContent);
-    taskCard.appendChild(deleteButton);
-
-    // Drag event listeners
-    taskCard.addEventListener('dragstart', handleDragStart);
-    taskCard.addEventListener('dragend', handleDragEnd);
-
-    return taskCard;
-  }
-
-  function deleteTask(taskId) {
-    for (let quadrant in tasks) {
-      tasks[quadrant] = tasks[quadrant].filter(task => task.id !== taskId);
-    }
-    const taskCard = document.querySelector(`[data-task-id="${taskId}"]`);
-    if (taskCard) {
-      taskCard.remove();
-    }
-    saveTasks();
-  }
-
-  function addTask(taskText) {
-    if (Object.values(tasks).flat().some(task => task.text === taskText)) {
-      alert("Task already exists!");
-      return;
-    }
-    
-    const quadrantSelect = document.getElementById('quadrantSelect');
-    const quadrantId = quadrantSelect.value;
-    const taskId = Date.now().toString();
-
-    tasks[quadrantId].push({ id: taskId, text: taskText });
-    const quadrantEl = document.querySelector(`[data-quadrant="${quadrantId}"]`);
-    quadrantEl.appendChild(createTaskCard(taskText, taskId));
-    saveTasks();
-  }
-
-  function handleDragStart(e) {
-    e.target.classList.add('dragging');
-    e.dataTransfer.setData('text/plain', e.target.dataset.taskId);
-    const sourceQuadrant = e.target.closest('.quadrant').dataset.quadrant;
-    e.dataTransfer.setData('sourceQuadrant', sourceQuadrant);
-  }
-
-  function handleDragEnd(e) {
-    e.target.classList.remove('dragging');
-    document.querySelectorAll('.quadrant').forEach(quadrant => {
-      quadrant.classList.remove('drag-over');
-    });
-  }
-
-  document.addEventListener('DOMContentLoaded', () => {
-    renderAllTasks();
-    
-    document.getElementById('taskForm').addEventListener('submit', (e) => {
-      e.preventDefault();
-      const taskInput = document.getElementById('taskInput');
-      const taskText = taskInput.value.trim();
-      if (taskText) {
-        addTask(taskText);
-        taskInput.value = '';
-      }
-    });
-
-    document.querySelectorAll('.quadrant').forEach(quadrant => {
-      quadrant.addEventListener('dragover', (e) => {
-        e.preventDefault();
-        e.currentTarget.classList.add('drag-over');
+      document.addEventListener("DOMContentLoaded", () => {
+        document.querySelectorAll(".quadrant").forEach(t => {
+          const e = t.querySelector("h2").innerText;
+          t.innerHTML = "<h2>" + e + "</h2>";
+        });
+        for (const t in a) {
+          const e = document.querySelector(`[data-quadrant="${t}"]`);
+          e && a[t]?.forEach(t => {
+            e.appendChild(r(t.text, t.id));
+          });
+        }
+        document.getElementById("taskForm").addEventListener("submit", t => {
+          t.preventDefault();
+          const e = document.getElementById("taskInput"),
+            o = e.value.trim();
+          if (o) {
+            if (Object.values(a).flat().some(t => t.text === o)) return void alert("Task already exists!");
+            const t = document.getElementById("quadrantSelect").value,
+              d = Date.now().toString();
+            a[t].push({
+              id: d,
+              text: o
+            });
+            document.querySelector(`[data-quadrant="${t}"]`).appendChild(r(o, d)), n(), e.value = "";
+          }
+        }), document.querySelectorAll(".quadrant").forEach(t => {
+          t.addEventListener("dragover", t => {
+            t.preventDefault(), t.currentTarget.classList.add("drag-over");
+          }), t.addEventListener("dragleave", t => {
+            t.currentTarget.classList.remove("drag-over");
+          }), t.addEventListener("drop", t => {
+            t.preventDefault();
+            const r = t.currentTarget;
+            r.classList.remove("drag-over");
+            const e = t.dataTransfer.getData("text/plain"),
+              o = t.dataTransfer.getData("sourceQuadrant"),
+              d = r.dataset.quadrant;
+            if (o === d) return;
+            const s = a[o].findIndex(t => t.id === e);
+            if (-1 === s) return;
+            const i = a[o].splice(s, 1)[0];
+            a[d].push(i);
+            const c = document.querySelector(`[data-task-id="${e}"]`);
+            r.appendChild(c), n();
+          });
+        });
       });
-      
-      quadrant.addEventListener('dragleave', (e) => {
-        e.currentTarget.classList.remove('drag-over');
-      });
-      
-      quadrant.addEventListener('drop', (e) => {
-        e.preventDefault();
-        const quadrant = e.currentTarget;
-        quadrant.classList.remove('drag-over');
-
-        const taskId = e.dataTransfer.getData('text/plain');
-        const sourceQuadrant = e.dataTransfer.getData('sourceQuadrant');
-        const targetQuadrant = quadrant.dataset.quadrant;
-
-        if (sourceQuadrant === targetQuadrant) return;
-
-        const taskIndex = tasks[sourceQuadrant].findIndex(task => task.id === taskId);
-        if (taskIndex === -1) return;
-
-        const task = tasks[sourceQuadrant].splice(taskIndex, 1)[0];
-        tasks[targetQuadrant].push(task);
-
-        const taskElement = document.querySelector(`[data-task-id="${taskId}"]`);
-        quadrant.appendChild(taskElement);
-        saveTasks();
-      });
-    });
-  });
-})();
+    })();
   </script>
 </body>
 </html>
